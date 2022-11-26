@@ -8,7 +8,8 @@
 /* Defines */
 #define CAN1_DEBUG 1
 #define CAN2_DEBUG 1
-#define CAN_TEST_DATA 1
+#define CAN_FIFO 1
+#define CAN_TEST_DATA 0
 #define STATE_DEBUG 1
 
 /* Globals */
@@ -19,8 +20,6 @@ extern byte haldex_engagement;
 extern byte haldex_state;
 extern float lock_target;
 extern float ped_value;
-extern can_s body_can;
-extern can_s haldex_can;
 
 /* Functions */
 extern bool bt_send_status(void *params);

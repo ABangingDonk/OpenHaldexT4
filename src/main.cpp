@@ -6,25 +6,18 @@ byte haldex_engagement;
 byte vehicle_speed;
 auto timer = timer_create_default();
 
-can_s body_can = {
-    0,                          // CAN status
-    false,                      // Inited flag
-    "Body"                      // Name
-};
-
-can_s haldex_can = {
-    0,                          // CAN status
-    false,                      // Inited flag
-    "Haldex"                    // Name
-};
-
 void setup()
 {
     Serial.begin(115200);
     Serial.println("\nOpenHaldexTeensy init");
 
-    pinMode(2, INPUT_PULLUP);
-    if (!digitalRead(2))
+#if defined(__IMXRT1062__)
+    Serial.printf("Running at %dMHz\n", F_CPU_ACTUAL / (1000 * 1000));
+#endif
+
+    pinMode(4, INPUT_PULLUP);
+    delay(10);
+    if (!digitalRead(4))
     {
         Serial.println("Enter BT setup mode");
         Serial2.begin(38400);
@@ -51,7 +44,7 @@ void setup()
 void loop()
 {
     timer.tick();
-    service_can_events();
+    //service_can_events();
 
     if (Serial2.available())
     {

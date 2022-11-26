@@ -3,18 +3,26 @@
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 
+#if !CAN_FIFO
 #define NUM_RX_MB_HALDEX 8
 #define NUM_TX_MB_HALDEX 8
 #define NUM_RX_MB_BODY 8
 #define NUM_TX_MB_BODY 8
+#endif
 
 void can_init(void)
 {
     Can1.begin();
+    Can1.setClock(CLK_60MHz);
     Can1.setBaudRate(500000);
-    Can1.setClock(CLK_80MHz);
     Can1.setMaxMB(16);
     Can1.onReceive(haldex_can_rx_callback);
+#if CAN_FIFO
+    Can1.enableFIFO();
+    Can1.setFIFOFilter(REJECT_ALL);
+    Can1.setFIFOFilter(0, HALDEX_ID, STD);
+    Can1.enableFIFOInterrupt();
+#else
     for (int i = 0; i<NUM_RX_MB_HALDEX; i++)
     {
         Can1.setMB((FLEXCAN_MAILBOX)i,RX);
@@ -24,14 +32,19 @@ void can_init(void)
         Can1.setMB((FLEXCAN_MAILBOX)i,TX);
     }
     Can1.enableMBInterrupts();
+#endif
     Can1.mailboxStatus();
 
 
     Can2.begin();
+    Can2.setClock(CLK_60MHz);
     Can2.setBaudRate(500000);
-    Can2.setClock(CLK_80MHz);
     Can2.setMaxMB(16);
     Can2.onReceive(body_can_rx_callback);
+#if CAN_FIFO
+    Can2.enableFIFO();
+    Can2.enableFIFOInterrupt();
+#else
     for (int i = 0; i<NUM_RX_MB_BODY; i++)
     {
         Can2.setMB((FLEXCAN_MAILBOX)i,RX);
@@ -41,6 +54,7 @@ void can_init(void)
         Can2.setMB((FLEXCAN_MAILBOX)i,TX);
     }
     Can2.enableMBInterrupts();
+#endif
     Can2.mailboxStatus();
 
 #if 0
@@ -107,12 +121,22 @@ void haldex_can_rx_callback(const CAN_message_t &frame)
         Serial.println();
     }
 #endif
+
     haldex_state = frame.buf[0];
     haldex_engagement = frame.buf[1];
 
 #if !CAN_TEST_DATA
+    CAN_message_t frame_out;
+    frame_out.id = frame.id;
+    frame_out.flags = frame.flags;
+    frame_out.len = frame.len;
+    if (frame.len <= ARRAY_SIZE(frame_out.buf))
+    {
+        memcpy(frame_out.buf, frame.buf, frame.len);
+    }
+
     // From haldex to car, just forward whatever we receive.
-    if (!Can2.write(frame))
+    if (!Can2.write(frame_out))
     {
         Serial.println("Body CAN TX fail");
         Can2.mailboxStatus();
@@ -122,7 +146,15 @@ void haldex_can_rx_callback(const CAN_message_t &frame)
 
 void body_can_rx_callback(const CAN_message_t &frame)
 {
-    CAN_message_t frame_out = frame;
+    CAN_message_t frame_out;
+    frame_out.id = frame.id;
+    frame_out.flags = frame.flags;
+    frame_out.len = frame.len;
+    if (frame.len <= ARRAY_SIZE(frame_out.buf))
+    {
+        memcpy(frame_out.buf, frame.buf, frame.len);
+    }
+
 #if CAN2_DEBUG
     if(1)//frame->id == MOTOR1_ID)
     {
