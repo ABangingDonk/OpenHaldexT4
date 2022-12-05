@@ -19,8 +19,8 @@ void can_init(void)
     Can1.onReceive(haldex_can_rx_callback);
 #if CAN_FIFO
     Can1.enableFIFO();
-    Can1.setFIFOFilter(REJECT_ALL);
-    Can1.setFIFOFilter(0, HALDEX_ID, STD);
+    //Can1.setFIFOFilter(REJECT_ALL);
+    //Can1.setFIFOFilter(0, HALDEX_ID, STD);
     Can1.enableFIFOInterrupt();
 #else
     for (int i = 0; i<NUM_RX_MB_HALDEX; i++)
@@ -172,11 +172,6 @@ void body_can_rx_callback(const CAN_message_t &frame)
     {
         case MOTOR1_ID:
             ped_value = frame.buf[5] * 0.4;
-            
-            if (state.mode == MODE_FWD)
-            {
-                memset(frame_out.buf, 0, frame_out.len);
-            }
             break;
         case MOTOR2_ID:
             int calc_speed = (frame.buf[3] * 100 * 128) / 10000;
@@ -187,6 +182,11 @@ void body_can_rx_callback(const CAN_message_t &frame)
     if(state.mode == MODE_5050 || state.mode == MODE_CUSTOM)
     {
         get_lock_data(&frame_out);
+    }
+    else if (state.mode == MODE_FWD)
+    {
+        // If FWD mode then literally zero out everything going from chassis to haldex
+        memset(frame_out.buf, 0, frame_out.len);
     }
 
 #if !CAN_TEST_DATA

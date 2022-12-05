@@ -34,6 +34,10 @@ void bt_process(bt_packet *rx_packet)
             state.mode = rx_packet->data[1] <= MODE_CUSTOM ? (openhaldex_mode_id)rx_packet->data[1]
                                                            : MODE_STOCK;
             state.ped_threshold = rx_packet->data[2];
+            if (state.mode == MODE_FWD)
+            {
+                lock_target = 0;
+            }
 #if STATE_DEBUG
             Serial.printf("APP_MSG_MODE: mode=%d ped_threshold=%d%%\n", rx_packet->data[1], rx_packet->data[2]);
 #endif
