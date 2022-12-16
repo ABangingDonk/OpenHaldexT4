@@ -35,6 +35,7 @@
 #define CAN_FIFO 1
 #define CAN_TEST_DATA 0
 #define STATE_DEBUG 0
+#define BT_CONF_EN 0
 
 /* Globals */
 extern openhaldex_state state;

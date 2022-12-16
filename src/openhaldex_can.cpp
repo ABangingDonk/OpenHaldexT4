@@ -56,37 +56,6 @@ void can_init(void)
     Can2.enableMBInterrupts();
 #endif
     Can2.mailboxStatus();
-
-#if 0
-    Can1.setRXFilter(0, HALDEX_ID, 0x7ff, false);
-    Can1.setCallback(0, haldex_can_rx_callback);
-    Can1.mailbox_set_mode(1,3);
-    Can1.mailbox_set_mode(2,3);
-    Can1.mailbox_set_mode(3,3);
-    Can1.mailbox_set_mode(4,3);
-    Can1.mailbox_set_mode(5,3);
-    Can1.mailbox_set_mode(6,3);
-    Can1.mailbox_set_mode(7,3);
-    
-    Can2.setRXFilter(0, 0, 0, false);
-    Can2.setCallback(0, body_can_rx_callback);
-    Can2.setRXFilter(1, 0, 0, false);
-    Can2.setCallback(1, body_can_rx_callback);
-    Can2.setRXFilter(2, 0, 0, false);
-    Can2.setCallback(2, body_can_rx_callback);
-    Can2.setRXFilter(3, 0, 0, false);
-    Can2.setCallback(3, body_can_rx_callback);
-    Can2.setRXFilter(4, 0, 0, false);
-    Can2.setCallback(4, body_can_rx_callback);
-    Can2.setRXFilter(5, 0, 0, false);
-    Can2.setCallback(5, body_can_rx_callback);
-    Can2.setRXFilter(6, 0, 0, false);
-    Can2.setCallback(6, body_can_rx_callback);
-    Can2.mailbox_set_mode(7,3);
-    
-    Can1.disable_tx_repeat();
-    Can2.disable_tx_repeat();
-#endif
 }
 
 void service_can_events(void)
