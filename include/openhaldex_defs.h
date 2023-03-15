@@ -63,3 +63,8 @@ typedef struct bt_packet {
     byte len;
     byte data[6];
 }bt_packet;
+
+enum board_version{
+    BOARD_v0p1,
+    BOARD_v0p2,
+};

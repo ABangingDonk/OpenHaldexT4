@@ -79,6 +79,9 @@ bool print_mb_status(void *params)
 
 void haldex_can_rx_callback(const CAN_message_t &frame)
 {
+#ifdef BOARD_v0p2
+    digitalWriteFast(11, 0);
+#endif
 #if CAN1_DEBUG
     if(1)//frame.buf[0])
     {
@@ -111,10 +114,17 @@ void haldex_can_rx_callback(const CAN_message_t &frame)
         Can2.mailboxStatus();
     }
 #endif
+#ifdef BOARD_v0p2
+    digitalWriteFast(11, 1);
+#endif
 }
 
 void body_can_rx_callback(const CAN_message_t &frame)
 {
+#ifdef BOARD_v0p2
+    digitalWriteFast(11, 0);
+#endif
+
     CAN_message_t frame_out;
     frame_out.id = frame.id;
     frame_out.flags = frame.flags;
@@ -164,6 +174,10 @@ void body_can_rx_callback(const CAN_message_t &frame)
         Serial.println("Haldex CAN TX fail");
         Can1.mailboxStatus();
     }
+#endif
+
+#ifdef BOARD_v0p2
+    digitalWriteFast(11, 1);
 #endif
 }
 
