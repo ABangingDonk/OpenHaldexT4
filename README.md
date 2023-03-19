@@ -11,7 +11,7 @@ Installation notes here are for a Mk1 Audi TT.
 ## App notes
 
 ### App install & pairing
-- Download [OpenHaldex.2.1.apk](https://github.com/ABangingDonk/OpenHaldexApp/raw/main/OpenHaldex.2.1.apk), copy it to your Android device and install it
+- Download [OpenHaldex app](https://github.com/ABangingDonk/OpenHaldexApp/releases/latest), copy it to your Android device and install it
 - It will probably complain about installing apps from unknown sources and/or Google's Play Protect not knowing who I am.. you'll have to click through all the warnings
 - As long as the HC-05 BT module is powered, configured and within range (5-10 metres), the app will request bluetooth permissions and try to pair when you press the connect button within the app
 
