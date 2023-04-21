@@ -2,18 +2,21 @@
 # OpenHaldexT4
 
 ## Brief
-Gain control over the [Gen 1 Haldex](https://www.awdwiki.com/en/haldex/#haldex_generation_I__1998_2001 "Gen 1 Haldex") equipped to Quattro and 4Motion vehicles based on the Mk. 4 VW Golf platform (8N Audi TT, 8L Audi A3, 1J VW Golf, etc.)
+Gain control over the [Gen 1 Haldex](https://www.awdwiki.com/en/haldex/#haldex_generation_I__1998_2001) equipped to Quattro and 4Motion vehicles based on the Mk. 4 VW Golf platform (8N Audi TT, 8L Audi A3, 1J VW Golf, etc.)
 
 [Demo video](https://youtu.be/rtE-rsQuckA)
+
+[Ordering form](https://abangingdonk.github.io/)
 
 Installation notes here are for a Mk1 Audi TT.
 
 ## App notes
 
 ### App install & pairing
-- Download [OpenHaldex.2.1.apk](https://github.com/ABangingDonk/OpenHaldexApp/raw/main/OpenHaldex.2.1.apk), copy it to your Android device and install it
+- Download [OpenHaldex apk](https://github.com/ABangingDonk/OpenHaldexApp/releases/latest), copy it to your Android device and install it
 - It will probably complain about installing apps from unknown sources and/or Google's Play Protect not knowing who I am.. you'll have to click through all the warnings
 - As long as the HC-05 BT module is powered, configured and within range (5-10 metres), the app will request bluetooth permissions and try to pair when you press the connect button within the app
+- I recommend **not** pairing with the OpenHaldex module through your phone's menus first.. let the app do it
 
 ### Basic usage
 - Comes with three pre-loaded modes which cannot be deleted or edited
@@ -35,13 +38,9 @@ Installation notes here are for a Mk1 Audi TT.
 ## Installation
 
 #### Prep
-Configure the BT HC-05 module using the following AT commands.. plenty of guides available for this.
-```
-AT+UART=115200,0,0
-AT+NAME=OpenHaldexT4
-AT+RESET
-```
-Program the Teensy using PlatformIO & VS:Code
+Program the Teensy using PlatformIO & VS:Code. First, download Visual Studio: Code and clone the OpenHaldexT4 repository (https://github.com/ABangingDonk/OpenHaldexT4.git).
+
+Then install the Platform IO extension for VS:Code. Once this is installed, you should be able to build/upload the code.
 
 #### Install
 Take out the spare wheel and toolkit to expose the wiring going down to the Haldex controller
