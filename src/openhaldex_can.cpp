@@ -3,13 +3,6 @@
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 
-#if !CAN_FIFO
-#define NUM_RX_MB_HALDEX 8
-#define NUM_TX_MB_HALDEX 8
-#define NUM_RX_MB_BODY 8
-#define NUM_TX_MB_BODY 8
-#endif
-
 void can_init(void)
 {
     Can1.begin();
@@ -17,44 +10,17 @@ void can_init(void)
     Can1.setBaudRate(500000);
     Can1.setMaxMB(16);
     Can1.onReceive(haldex_can_rx_callback);
-#if CAN_FIFO
     Can1.enableFIFO();
-    //Can1.setFIFOFilter(REJECT_ALL);
-    //Can1.setFIFOFilter(0, HALDEX_ID, STD);
     Can1.enableFIFOInterrupt();
-#else
-    for (int i = 0; i<NUM_RX_MB_HALDEX; i++)
-    {
-        Can1.setMB((FLEXCAN_MAILBOX)i,RX);
-    }
-    for (int i = NUM_RX_MB_HALDEX; i<(NUM_TX_MB_HALDEX + NUM_RX_MB_HALDEX); i++)
-    {
-        Can1.setMB((FLEXCAN_MAILBOX)i,TX);
-    }
-    Can1.enableMBInterrupts();
-#endif
     Can1.mailboxStatus();
-
 
     Can2.begin();
     Can2.setClock(CLK_60MHz);
     Can2.setBaudRate(500000);
     Can2.setMaxMB(16);
     Can2.onReceive(body_can_rx_callback);
-#if CAN_FIFO
     Can2.enableFIFO();
     Can2.enableFIFOInterrupt();
-#else
-    for (int i = 0; i<NUM_RX_MB_BODY; i++)
-    {
-        Can2.setMB((FLEXCAN_MAILBOX)i,RX);
-    }
-    for (int i = NUM_RX_MB_BODY; i<(NUM_TX_MB_BODY + NUM_RX_MB_BODY); i++)
-    {
-        Can2.setMB((FLEXCAN_MAILBOX)i,TX);
-    }
-    Can2.enableMBInterrupts();
-#endif
     Can2.mailboxStatus();
 }
 
@@ -79,9 +45,8 @@ bool print_mb_status(void *params)
 
 void haldex_can_rx_callback(const CAN_message_t &frame)
 {
-#ifdef BOARD_v0p2
-    digitalWriteFast(11, 0);
-#endif
+    digitalWriteFast(PIN_LED_G, 0);
+
 #if CAN1_DEBUG
     if(1)//frame.buf[0])
     {
@@ -114,16 +79,13 @@ void haldex_can_rx_callback(const CAN_message_t &frame)
         Can2.mailboxStatus();
     }
 #endif
-#ifdef BOARD_v0p2
-    digitalWriteFast(11, 1);
-#endif
+
+    digitalWriteFast(PIN_LED_G, 1);
 }
 
 void body_can_rx_callback(const CAN_message_t &frame)
 {
-#ifdef BOARD_v0p2
-    digitalWriteFast(11, 0);
-#endif
+    digitalWriteFast(PIN_LED_G, 0);
 
     CAN_message_t frame_out;
     frame_out.id = frame.id;
@@ -176,9 +138,7 @@ void body_can_rx_callback(const CAN_message_t &frame)
     }
 #endif
 
-#ifdef BOARD_v0p2
-    digitalWriteFast(11, 1);
-#endif
+    digitalWriteFast(PIN_LED_G, 1);
 }
 
 byte dummy_vehicle_speed = 0x00;
@@ -197,7 +157,7 @@ bool send_can_test(void* params)
     frame.buf[4] = 0xf0;
     frame.buf[5] = 0xf0;
     frame.buf[6] = 0x20;
-    frame.buf[7] = 0xf0;
+    frame.buf[7] = state.mode;
     Can1.write(frame);
 
     CAN_message_t motor2;
@@ -205,52 +165,52 @@ bool send_can_test(void* params)
     motor2.len = 4;
     motor2.buf[3] = dummy_vehicle_speed++;
     Can1.write(motor2);
-#if 0
+#if 1
     
     frame.id = MOTOR3_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
 
     frame.id = MOTOR5_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
 
     frame.id = MOTOR6_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
 
     frame.id = MOTOR7_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
 
     frame.id = MOTOR_FLEX_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
     
     frame.id = BRAKES1_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
     
     frame.id = BRAKES2_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
     
     frame.id = BRAKES3_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
     
     frame.id = BRAKES5_ID;
-    frame.length = 1;
-    frame.data.bytes[0] = 0xff;
-    Can1.sendFrame(frame);
+    frame.len = 1;
+    frame.buf[0] = 0xff;
+    Can1.write(frame);
 #endif
 
     CAN_message_t haldex;

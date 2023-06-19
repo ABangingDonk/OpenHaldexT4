@@ -32,23 +32,29 @@
 /* Defines */
 #define CAN1_DEBUG 0
 #define CAN2_DEBUG 0
-#define CAN_FIFO 1
 #define CAN_TEST_DATA 0
 #define STATE_DEBUG 0
-#define BUTTONS_HEADLESS 0
 
 //#define BOARD_v0p1
-#define BOARD_v0p2
+//#define BOARD_v0p2
+#define BOARD_v0p3
 
+#define PIN_BT_CONF     4
+#define PIN_LED_R       10
+#define PIN_LED_G       11
+#define PIN_LED_B       12
+#define PIN_BT_LED2     14
+#define PIN_BT_LED1     15
 #if defined(BOARD_v0p1)
-#define BUTTON_FWD 7
-#define BUTTON_5050 8
-#elif defined(BOARD_v0p2)
-#define BUTTON_FWD 17
-#define BUTTON_5050 16
+#define PIN_FWD_MODE    7
+#define PIN_5050_MODE   8
+#elif defined(BOARD_v0p2) || defined(BOARD_v0p3)
+#define PIN_5050_MODE   16
+#define PIN_FWD_MODE    17
 #else
 #error "Unknown board"
 #endif
+
 
 /* Globals */
 extern openhaldex_state state;
@@ -62,9 +68,7 @@ extern float ped_value;
 /* Functions */
 extern bool bt_send_status(void *params);
 extern void bt_process(bt_packet *rx_packet);
-#ifdef CAN_TEST_DATA
 extern bool send_can_test(void* params);
-#endif
 extern void haldex_can_rx_callback(const CAN_message_t &frame);
 extern void body_can_rx_callback(const CAN_message_t &frame);
 extern void get_lock_data(CAN_message_t *frame);

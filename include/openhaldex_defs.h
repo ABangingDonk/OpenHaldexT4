@@ -17,6 +17,7 @@
 #define DATA_CTRL_CHECK_LOCKPOINTS  0
 #define DATA_CTRL_CLEAR             1
 #define DATA_CTRL_CHECK_MODE        2
+#define DATA_CTRL_RECONNECT_BT      3
 
 #define APP_MSG_MODE        0
 #define APP_MSG_STATUS      1
@@ -57,14 +58,10 @@ typedef struct openhaldex_state {
     openhaldex_mode_id mode;
     openhaldex_custom_mode custom_mode;
     float ped_threshold;
+    bool mode_override;
 }openhaldex_state;
 
 typedef struct bt_packet {
     byte len;
-    byte data[6];
+    byte data[7];
 }bt_packet;
-
-enum board_version{
-    BOARD_v0p1,
-    BOARD_v0p2,
-};

@@ -8,8 +8,9 @@ bool bt_send_status(void *params)
     packet.data[2] = haldex_engagement;
     packet.data[3] = lock_target;
     packet.data[4] = vehicle_speed;
-    packet.data[5] = SERIAL_PACKET_END;
-    packet.len = 6;
+    packet.data[5] = state.mode_override;
+    packet.data[6] = SERIAL_PACKET_END;
+    packet.len = 7;
 
     for (int i = 0; i < packet.len - 1; i++)
     {
@@ -31,6 +32,10 @@ void bt_process(bt_packet *rx_packet)
     switch (rx_packet->data[0])
     {
         case APP_MSG_MODE:
+            if (state.mode_override)
+            {
+                return;
+            }
             state.mode = rx_packet->data[1] <= MODE_CUSTOM ? (openhaldex_mode_id)rx_packet->data[1]
                                                            : MODE_STOCK;
             state.ped_threshold = rx_packet->data[2];
@@ -96,6 +101,10 @@ void bt_process(bt_packet *rx_packet)
                     tx_packet.len = 5;
 
                     Serial2.write(tx_packet.data, tx_packet.len);
+                    break;
+                case DATA_CTRL_RECONNECT_BT:
+                    state.mode_override = false;
+                    Serial.println("App assumed control of override");
                     break;
             }
             break;

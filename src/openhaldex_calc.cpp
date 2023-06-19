@@ -9,7 +9,7 @@ static float get_lock_target_adjustment(void)
 
     if (state.mode == MODE_5050)
     {
-        if (ped_value >= state.ped_threshold || state.ped_threshold == 0)
+        if (ped_value >= state.ped_threshold || state.ped_threshold == 0 || state.mode_override)
         {
             return 100;
         }
@@ -38,19 +38,19 @@ static float get_lock_target_adjustment(void)
         }
     }
 
-    /* Get the easy cases out the way first... */
-    if (vehicle_speed <= lp_lower.speed)
-    {
-        return lp_lower.lock;
-    }
-    if (vehicle_speed >= lp_upper.speed)
-    {
-        return lp_upper.lock;
-    }
-
     /* If locking at all... */
-    if (ped_value >= state.ped_threshold || state.ped_threshold == 0)
+    if (ped_value >= state.ped_threshold || state.ped_threshold == 0 || state.mode_override)
     {
+        /* Get the easy cases out the way first... */
+        if (vehicle_speed <= lp_lower.speed)
+        {
+            return lp_lower.lock;
+        }
+        if (vehicle_speed >= lp_upper.speed)
+        {
+            return lp_upper.lock;
+        }
+        
         /* Need to interpolate */
         float inter = (float)(lp_upper.speed - lp_lower.speed) / (float)(vehicle_speed - lp_lower.speed);
 
