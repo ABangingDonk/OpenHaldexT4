@@ -6,8 +6,6 @@ Gain control over the [Gen 1 Haldex](https://www.awdwiki.com/en/haldex/#haldex_g
 
 [Demo video](https://youtu.be/rtE-rsQuckA)
 
-[Ordering form](https://abangingdonk.github.io/)
-
 Installation notes here are for a Mk1 Audi TT.
 
 ## App notes
